@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>tubdub</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="css/main.css" rel="stylesheet" media="screen">
+  </head>
+  <body>
+    <div class="navbar navbar-fixed-top">
+      <div class="container">
+        <a class="navbar-brand" href="index.html">tubdub : )</a>
+        <p class="navbar-text pull-right" style="color:white"></p>
+      </div>
+    </div>
+
+
+    <div class="container" id="notloggedin">
+
+      <div class="row">
+        <div class="col-lg-8">
+          <div class="jumbotron">
+            tubdub makes you happy.
+          </div>
+
+        </div>
+
+        <div class="col-lg-4">
+
+          <form id="signin" style="margin-bottom:20px">
+            <fieldset>
+              <div class="form-group">
+                <input type="text" class="form-control" id="myemail" placeholder="enter email">
+              </div>
+              <div class="row">
+                <div class="col-lg-8">
+                  <div class="form-group">
+                    <input type="password" class="form-control" id="mypassword" placeholder="password">
+                  </div>
+                </div>
+                <div class="col-lg-4">
+                  <button type="button" class="btn btn-primary">sign in</button>
+                </div>
+                </div>
+            </fieldset>
+          </form>
+          <div id="subResult1">
+          </div>
+
+          <form id="signup">
+            <legend>new to tubdub?</legend>
+            <fieldset>
+              <div class="form-group">
+                <input type="text" class="form-control" id="email" placeholder="enter email">
+              </div>
+              <div class="row">
+                <div class="col-lg-8">
+                  <div class="form-group">
+                    <input type="password" class="form-control" id="password" placeholder="password">
+                  </div>
+                </div>
+                <div class="col-lg-4">
+                  <button type="button" class="btn btn-danger">sign up</button>
+                </div>
+                </div>
+            </fieldset>
+          </form>
+          <div id="subResult2">
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <!-- JavaScript plugins (requires jQuery) -->
+    <script src="http://code.jquery.com/jquery.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+
+    <!-- Optionally enable responsive features in IE8 -->
+    <script src="js/respond.js"></script>
+
+    <script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/md5.js"></script>
+
+    <script>
+      $(document).ready(function(){
+
+        /* When somebody signs in */
+        $('#signin button').click(function(){
+          var email = $("#signin #myemail").val();
+          var password = $("#signin #mypassword").val();
+          var hash = CryptoJS.MD5(password);
+          $.ajax({
+            type: "POST",
+            url: 'signin.php',
+            data: 'email='+email+'&hash='+hash,
+            dataType: 'json',
+            success: function(data) {
+              if (data['loginsuccess']==0){
+                $("#subResult1").html("oops");
+              } else {
+                $(".navbar p").html(data['email']);
+                $("#notloggedin").fadeOut();
+              }
+            }
+          }); /* end .ajax */
+        }); /* end click function */
+
+
+        /* When somebody signs up */
+        $('#signup button').click(function(){
+          var email = $("#signup #email").val();
+          var password = $("#signup #password").val();
+          var hash = CryptoJS.MD5(password);
+          $.ajax({
+            type: "POST",
+            url: 'welcome.php',
+            data: 'email='+email+'&hash='+hash,
+            dataType: 'json',
+            success: function(data) {
+              if (data['userexists']==0){
+                $("#subResult2").html("congrats!");
+              } else {
+                $("#subResult2").html("oops, that email is already registered.");
+              }
+            }
+          }); /* end .ajax */
+        }); /* end click function */
+
+      }); /* end document ready */
+    </script>
+  </body>
+</html>
