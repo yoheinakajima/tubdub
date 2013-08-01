@@ -53,12 +53,12 @@
           <form id="signup">
             <legend>new to tubdub?</legend>
             <fieldset>
-              <div class="form-group">
+              <div class="form-group" id="signup-email">
                 <input type="text" class="form-control" id="email" placeholder="enter email">
               </div>
               <div class="row">
                 <div class="col-lg-8">
-                  <div class="form-group">
+                  <div class="form-group" id="signup-password">
                     <input type="password" class="form-control" id="password" placeholder="password">
                   </div>
                 </div>
@@ -111,8 +111,21 @@
 
         /* When somebody signs up */
         $('#signup button').click(function(){
+
+          $("label").remove();
+          $("#signup .form-group").removeClass("has-error");
           var email = $("#signup #email").val();
+          if (email === ""){
+                $("#signup-email").addClass("has-error");
+                $("#signup-email input").after('<label class="control-label">oops, you need an email address.</label>');
+                return;
+          };
           var password = $("#signup #password").val();
+          if (password === ""){
+                $("#signup-password").addClass("has-error");
+                $("#signup-password input").after('<label class="control-label">oops, you need a password.</label>');
+                return;
+          };
           var hash = CryptoJS.MD5(password);
           $.ajax({
             type: "POST",
@@ -123,7 +136,8 @@
               if (data['userexists']==0){
                 $("#subResult2").html("congrats!");
               } else {
-                $("#subResult2").html("oops, that email is already registered.");
+                $("#signup-email").addClass("has-error");
+                $("#signup-email input").after('<label class="control-label" id="signup-email-label">oops, that email address is already registered.</label>');
               }
             }
           }); /* end .ajax */
